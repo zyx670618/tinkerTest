@@ -24,7 +24,7 @@ import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
 /**
  * a simple tinker data reporter
- * Created by zhangshaowen on 16/9/17.
+ * SampleTinkerReport：修复结果（成功、冲突、失败等）。
  */
 public class SampleTinkerReport {
     private static final String TAG = "Tinker.SampleTinkerReport";

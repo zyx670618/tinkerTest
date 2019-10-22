@@ -29,6 +29,9 @@ import com.tencent.tinker.lib.util.TinkerServiceInternals;
 import java.io.File;
 
 
+/**
+ * SampleResultService：:patch补丁合成进程将合成结果返回给主进程的类。
+ */
 public class SampleResultService extends DefaultTinkerResultService {
     private static final String TAG = "Tinker.SampleResultService";
 

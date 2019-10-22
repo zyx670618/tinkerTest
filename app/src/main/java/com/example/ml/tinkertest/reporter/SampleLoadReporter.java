@@ -29,7 +29,7 @@ import java.io.File;
 
 /**
  * optional, you can just use DefaultLoadReporter
- * Created by zhangshaowen on 16/4/13.
+ * SampleLoadReporter：加载补丁时的一些回调。
  */
 public class SampleLoadReporter extends DefaultLoadReporter {
     private final static String TAG = "Tinker.SampleLoadReporter";

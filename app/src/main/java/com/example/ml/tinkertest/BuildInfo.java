@@ -17,7 +17,6 @@
 package com.example.ml.tinkertest;
 
 /**
- * Created by zhangshaowen on 16/6/30.
  * we use BuildInfo instead of {@link BuildInfo} to make less change
  */
 public class BuildInfo {

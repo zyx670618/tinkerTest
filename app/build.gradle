@@ -23,10 +23,6 @@ android {
         sourceCompatibility javaVersion
         targetCompatibility javaVersion
     }
-    //recommend
-    dexOptions {
-        jumboMode = true
-    }
 
     signingConfigs {
         release {  //这里配置的就是release的签名配置了
@@ -60,7 +56,6 @@ android {
          * we can use the newly value when patch
          */
         buildConfigField "String", "MESSAGE", "\"I am the base apk\""
-//        buildConfigField "String", "MESSAGE", "\"I am the patch apk\""
         /**
          * client version would update with patch
          * so we can get the newly git version easily!
@@ -70,38 +65,16 @@ android {
 
         //Tinker相关配置end======================================
     }
-
-//    aaptOptions{
-//        additionalParameters "--emit-ids", "${project.file('public.txt')}"
-//        cruncherEnabled false
-//    }
-
-//    //use to test flavors support
-//    productFlavors {
-//        flavor1 {
-//            applicationId 'tinker.sample.android.flavor1'
-//        }
-//
-//        flavor2 {
-//            applicationId 'tinker.sample.android.flavor2'
-//        }
-//    }
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
-
-    packagingOptions {
-        exclude "/META-INF/**"
-    }
-
-    //Tinker文档中推荐将jumboMode设置为true。
+    //Tinker相关配置start======================================
+    /**
+     * Tinker文档中推荐将jumboMode设置为true。
+     */
     dexOptions {
         // 支持大工程模式
         jumboMode = true
     }
+    //Tinker相关配置end======================================
+
     buildTypes {
         release {
             minifyEnabled true
@@ -191,6 +164,7 @@ if (buildWithTinker()) {
          * necessary，default 'null'
          * the old apk path, use to diff with the new apk to build
          * add apk from the build/bakApk
+         * 基准apk包的路径，必须输入，否则会报错
          */
         oldApk = getOldApkPath()
         /**
@@ -207,6 +181,7 @@ if (buildWithTinker()) {
          *         loader classes is ues to load patch dex. it is useless to change them.
          *         it won't crash, but these changes can't effect. you may ignore it
          * case 5: resources.arsc has changed, but we don't use applyResourceMapping to build
+         * 是否忽略有风险的补丁包。这里选择不忽略，当补丁包风险时会中断编译。
          */
         ignoreWarning = false
 
@@ -215,17 +190,20 @@ if (buildWithTinker()) {
          * whether sign the patch file
          * if not, you must do yourself. otherwise it can't check success during the patch loading
          * we will use the sign config with your build type
+         * 在运行过程中，我们需要验证基准apk包与补丁包的签名是否一致，我们是否需要为你签名。
          */
         useSign = true
 
         /**
          * optional，default 'true'
          * whether use tinker to build
+         * 是否打开tinker的功能。
          */
         tinkerEnable = buildWithTinker()
 
         /**
          * Warning, applyMapping will affect the normal android build!
+         * 编译相关的配置项
          */
         buildConfig {
             /**
@@ -239,6 +217,7 @@ if (buildWithTinker()) {
             /**
              * optional，default 'null'
              * It is nice to keep the resource id from R.txt file to reduce java changes
+             * 可选参数；在编译新的apk时候，我们希望通过保持旧apk的proguard混淆方式，从而减少补丁包的大小。这个只是推荐设置，不设置applyMapping也不会影响任何的assemble编译。
              */
             applyResourceMapping = getApplyResourceMappingPath()
 
@@ -248,12 +227,14 @@ if (buildWithTinker()) {
              * tinkerId is use to identify the unique base apk when the patch is tried to apply.
              * we can use git rev, svn rev or simply versionCode.
              * we will gen the tinkerId in your manifest automatic
+             * 可选参数；在编译新的apk时候，我们希望通过旧apk的R.txt文件保持ResId的分配，这样不仅可以减少补丁包的大小，同时也避免由于ResId改变导致remote view异常。
              */
             tinkerId = getTinkerIdValue()
 
             /**
              * if keepDexApply is true, class in which dex refer to the old apk.
              * open this can reduce the dex diff file size.
+             * 在运行过程中，我们需要验证基准apk包的tinkerId是否等于补丁包的tinkerId。这个是决定补丁包能运行在哪些基准包上面，一般来说我们可以使用git版本号、versionName等等。
              */
             keepDexApply = false
 
@@ -263,6 +244,8 @@ if (buildWithTinker()) {
              * protection tools.
              * If this attribute is true, the generated patch package will contain a
              * dex including all changed classes instead of any dexdiff patch-info files.
+             * 如果我们有多个dex,编译补丁时可能会由于类的移动导致变更增多。若打开keepDexApply模式，补丁包将根据基准包的类分布来编译。
+             * 是否使用加固模式，仅仅将变更的类合成补丁。注意，这种模式仅仅可以用于加固应用中。
              */
             isProtectedApp = false
 
@@ -274,10 +257,11 @@ if (buildWithTinker()) {
              * on compile-time.
              *
              * <b>Notice that currently this feature is incubating and only support NON-EXPORTED Activity</b>
+             * 是否支持新增非export的Activity（1.9.0版本开始才有的新功能）
              */
             supportHotplugComponent = false
         }
-
+        // dex相关的配置项
         dex {
             /**
              * optional，default 'jar'
@@ -292,6 +276,7 @@ if (buildWithTinker()) {
              * necessary，default '[]'
              * what dexes in apk are expected to deal with tinkerPatch
              * it support * or ? pattern.
+             * 只能是'raw'或者'jar'。 对于'raw'模式，我们将会保持输入dex的格式。对于'jar'模式，我们将会把输入dex重新压缩封装到jar。如果你的minSdkVersion小于14，你必须选择‘jar’模式，而且它更省存储空间，但是验证md5时比'raw'模式耗时。默认我们并不会去校验md5,一般情况下选择jar模式即可。
              */
             pattern = ["classes*.dex",
                        "assets/secondary-dex-?.jar"]
@@ -302,14 +287,16 @@ if (buildWithTinker()) {
              * you must put the following class into main dex.
              * Simply, you should add your own application {@code tinker.sample.android.SampleApplication}
              * own tinkerLoader, and the classes you use in them
-             *
+             * 需要处理dex路径，支持*、?通配符，必须使用'/'分割。路径是相对安装包的，例如assets/...
              */
             loader = [
-                    //use sample, let BaseBuildInfo unchangeable with tinker
+                    // 定义哪些类在加载补丁包的时候会用到。这些类是通过Tinker无法修改的类，也是一定要放在main dex的类。
+                    // 如果你自定义了TinkerLoader，需要将它以及它引用的所有类也加入loader中；
+                    // 其他一些你不希望被更改的类，例如Sample中的BaseBuildInfo类。这里需要注意的是，这些类的直接引用类也需要加入到loader中。或者你需要将这个类变成非preverify。
                     "tinker.sample.android.app.BaseBuildInfo"
             ]
         }
-
+        // lib相关的配置项
         lib {
             /**
              * optional，default '[]'
@@ -317,10 +304,11 @@ if (buildWithTinker()) {
              * it support * or ? pattern.
              * for library in assets, we would just recover them in the patch directory
              * you can get them in TinkerLoadResult with Tinker
+             * 需要处理lib路径，支持*、?通配符，必须使用'/'分割。与dex.pattern一致, 路径是相对安装包的，例如assets/...
              */
             pattern = ["lib/*/*.so"]
         }
-
+        // res相关的配置项
         res {
             /**
              * optional，default '[]'
@@ -336,17 +324,20 @@ if (buildWithTinker()) {
              * the resource file exclude patterns, ignore add, delete or modify resource change
              * it support * or ? pattern.
              * Warning, we can only use for files no relative with resources.arsc
-             */
+             * 需要处理res路径，支持*、?通配符，必须使用'/'分割。与dex.pattern一致, 路径是相对安装包的，例如assets/...，务必注意的是，只有满足pattern的资源才会放到合成后的资源包。
+             * 支持*、?通配符，必须使用'/'分割。若满足ignoreChange的pattern，在编译时会忽略该文件的新增、删除与修改。 最极端的情况，ignoreChange与上面的pattern一致，即会完全忽略所有资源的修改。
+            */
             ignoreChange = ["assets/sample_meta.txt"]
 
             /**
              * default 100kb
              * for modify resource, if it is larger than 'largeModSize'
              * we would like to use bsdiff algorithm to reduce patch file size
+             * 对于修改的资源，如果大于largeModSize，我们将使用bsdiff算法。这可以降低补丁包的大小，但是会增加合成时的复杂度。默认大小为100kb
              */
             largeModSize = 100
         }
-
+        // 用于生成补丁包中的'package_meta.txt'文件
         packageConfig {
             /**
              * optional，default 'TINKER_ID, TINKER_ID_VALUE' 'NEW_TINKER_ID, NEW_TINKER_ID_VALUE'
@@ -355,6 +346,9 @@ if (buildWithTinker()) {
              * or TinkerLoadResult.getPackageConfigByName
              * we will get the TINKER_ID from the old apk manifest for you automatic,
              * other config files (such as patchMessage below)is not necessary
+             * configField("key", "value"), 默认我们自动从基准安装包与新安装包的Manifest中读取tinkerId,并自动写入configField。
+             * 在这里，你可以定义其他的信息，在运行时可以通过TinkerLoadResult.getPackageConfigByName得到相应的数值。
+             * 但是建议直接通过修改代码来实现，例如BuildConfig。
              */
             configField("patchMessage", "tinker is sample to use")
             /**
@@ -374,6 +368,7 @@ if (buildWithTinker()) {
 
         /**
          * if you don't use zipArtifact or path, we just use 7za to try
+         * 7zip路径配置项，执行前提是useSign为true
          */
         sevenZip {
             /**

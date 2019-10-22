@@ -34,9 +34,9 @@ import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
  * optional, use dynamic configuration is better way
  * for native crash,
  * <p/>
- * Created by zhangshaowen on 16/7/3.
  * tinker's crash is caught by {@code LoadReporter.onLoadException}
  * use {@code TinkerApplicationHelper} api, no need to install tinker!
+ * SampleUncaughtExceptionHandler：Tinker的全局异常捕获器。
  */
 public class SampleUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "Tinker.SampleUncaughtExHandler";

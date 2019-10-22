@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * optional, you can just use DefaultPatchReporter
- * Created by zhangshaowen on 16/4/8.
+ * SamplePatchReporter：修复或者升级补丁时的一些回调。
  */
 public class SamplePatchReporter extends DefaultPatchReporter {
     private final static String TAG = "Tinker.SamplePatchReporter";

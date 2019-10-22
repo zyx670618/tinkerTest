@@ -34,7 +34,7 @@ import java.util.Properties;
 
 
 /**
- * Created by zhangshaowen on 16/4/30.
+ * SamplePatchListener：过滤Tinker收到的补丁包的修复、升级请求。
  * optional, you can just use DefaultPatchListener
  * we can check whatever you want whether we actually send a patch request
  * such as we can check rom space or apk channel
