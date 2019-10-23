@@ -12,15 +12,17 @@
         android:text="Hello World!"
         android:padding="10dp"
         android:gravity="center"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="更新文本!"
-        android:padding="10dp"
-        android:gravity="center"/>
+
     <Button
         android:id="@+id/loadPatch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="加载 patch"/>
+        android:text="加载补丁包"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:id="@+id/download"
+        android:text="下载apk"/>
 </LinearLayout>

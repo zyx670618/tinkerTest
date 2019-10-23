@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!--此时MyApplication会报红，不用管，编译时就会生成该类-->
     <application
@@ -26,6 +27,23 @@
             android:name=".service.SampleResultService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false"/>
+
+        <!--错误：Android N 上 安装Apk时报错：android.os.FileUriExposedException: file:///storage/emulated/0/Download/appName-2.3.0.apk exposed beyond app through Intent.getData()
+            原因：Android N对访问文件权限收回，按照Android N的要求，若要在应用间共享文件，您应发送一项 content://URI，并授予 URI 临时访问权限。
+            解决方法：在AndroidManifest.xml中添加FileProvider-->
+        <!--注意：authorities：app的包名.fileProvider
+                  grantUriPermissions：必须是true，表示授予 URI 临时访问权限
+                  exported：必须是false
+                  resource：中的@xml/filepath是我们接下来要添加的文件 -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.ml.tinkertest.fileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepath" />
+        </provider>
     </application>
 
 </manifest>
