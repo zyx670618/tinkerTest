@@ -24,11 +24,6 @@ android {
     compileSdkVersion 26 // android编译SDK的版本，即4.0SDK、5.0SDK等的android.jar文件
     buildToolsVersion "26.0.2"  // 使用SDK中编译工具的版本
 
-    compileOptions {
-        sourceCompatibility javaVersion  // 设置代码编译的版本，一般是在使用JDK1.8时，配置这个，使编译出来的jar包让别人使用时更通用
-        targetCompatibility javaVersion
-    }
-
     /**
      * 签名信息配置
      */
@@ -78,6 +73,11 @@ android {
     /**
      * Tinker推荐配置start======================================
      */
+    compileOptions {
+        sourceCompatibility javaVersion  // 设置代码编译的版本，一般是在使用JDK1.8时，配置这个，使编译出来的jar包让别人使用时更通用
+        targetCompatibility javaVersion
+    }
+
     //Tinker文档中推荐将jumboMode设置为true。
     dexOptions {
         // 支持大工程模式
@@ -116,13 +116,22 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    //Tinker基本类库
-    api("com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}") { changing = true }
-    implementation("com.tencent.tinker:tinker-android-loader:${TINKER_VERSION}") { changing = true }
-    //编译生成Application
+    implementation "com.android.support:multidex:1.0.1" // 加入加载多dex库
+    /**
+     * Tinker集成 Gradle版本大等于2.3的
+     */
+    //tinker的核心库
+    implementation("com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}") { changing = true }
+    //可选，用于生成application类
     annotationProcessor("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
     compileOnly("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
-    implementation "com.android.support:multidex:1.0.1" // 加入加载多dex库
+    /**
+     * Tinker集成 Gradle版本小于2.3的
+     */
+//    //可选，用于生成application类
+//    provided('com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}')
+//    //tinker的核心库
+//    compile('com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}')
 }
 
 /**
@@ -140,13 +149,13 @@ ext {
     // 是否使用Tinker(当你的项目处于开发调试阶段时，可以改为false)
     tinkerEnabled = true
     // 基础包文件路径（名字这里写死为old-app.apk。用于比较新旧app以生成补丁包，不管是debug还是release编译）
-    tinkerOldApkPath = "${bakPath}/app-release-1023-17-18-56.apk"
+    tinkerOldApkPath = "${bakPath}/app-release-1024-11-28-51.apk"
     // 基础包的mapping.txt文件路径（用于辅助混淆补丁包的生成，一般在生成release版app时会使用到混淆，所以这个mapping.txt文件一般只是用于release安装包补丁的生成）
-    tinkerApplyMappingPath = "${bakPath}/app-release-1023-17-18-56-mapping.txt"
+    tinkerApplyMappingPath = "${bakPath}/app-release-1024-11-28-51-mapping.txt"
     // 基础包的R.txt文件路径（如果你的安装包中资源文件有改动，则需要使用该R.txt文件来辅助生成补丁包）
-    tinkerApplyResourcePath = "${bakPath}/app-release-1023-17-18-56-R.txt"
+    tinkerApplyResourcePath = "${bakPath}/app-release-1024-11-28-51-R.txt"
     //多渠道打包相关
-    tinkerBuildFlavorDirectory = "${bakPath}/app-release-1023-17-18-56"
+    tinkerBuildFlavorDirectory = "${bakPath}/app-release-1024-11-28-51"
 }
 
 def getOldApkPath() {

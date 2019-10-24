@@ -20,6 +20,13 @@
         android:padding="10dp"
         android:gravity="center"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="补丁包文本2222!"
+        android:padding="10dp"
+        android:gravity="center"/>
+
     <Button
         android:id="@+id/loadPatch"
         android:layout_width="match_parent"
