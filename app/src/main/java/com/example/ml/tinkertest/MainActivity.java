@@ -68,11 +68,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
+        // 代码编译时的目标 sdk
+        int targetSdkVersion = MainActivity.this.getApplicationInfo().targetSdkVersion;
+        // 当前运行设备的sdk的版本号（即当前手机系统的版本号）
+        int devicesSdkVersion = Build.VERSION.SDK_INT;
+        // 安卓6.0对应的sdk是23，即这个值就是23
+        int androidSdk23 = Build.VERSION_CODES.M;
+        Log.e("111",targetSdkVersion+">>>"+devicesSdkVersion+">>>"+androidSdk23);
+        // 同时满足这两个条件，需要动态申请权限（注意很多资料都是只判断了一个条件）
+        if (targetSdkVersion >= androidSdk23 && devicesSdkVersion >= androidSdk23) {
+            Log.e("111","6.0动态授权");
+            checkPermissions();
+        }else{
+            Log.e("111","主清单授权");
+
+        }
+
         Button loadPatchButton = (Button) findViewById(R.id.loadPatch);
         loadPatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(), Environment.getExternalStorageDirectory().getAbsolutePath() + "/apkDownload/patch_signed_7zip.apk");
+                TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(), Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
             }
         });
 
@@ -81,23 +97,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mIsCancel=false;
-                
-                // 代码编译时的目标 sdk
-                int targetSdkVersion = MainActivity.this.getApplicationInfo().targetSdkVersion;
-                // 当前运行设备的sdk的版本号（即当前手机系统的版本号）
-                int devicesSdkVersion = Build.VERSION.SDK_INT;
-                // 安卓6.0对应的sdk是23，即这个值就是23
-                int androidSdk23 = Build.VERSION_CODES.M;
-                Log.e("111",targetSdkVersion+">>>"+devicesSdkVersion+">>>"+androidSdk23);
-                // 同时满足这两个条件，需要动态申请权限（注意很多资料都是只判断了一个条件）
-                if (targetSdkVersion >= androidSdk23 && devicesSdkVersion >= androidSdk23) {
-                    Log.e("111","6.0动态授权");
-                    checkPermissions();
-                }else{
-                    Log.e("111","主清单授权");
-                    //展示对话框
-                    showDownloadDialog();
-                }
+                //展示对话框
+                showDownloadDialog();
             }
         });
 
@@ -112,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
         if (mPermissionList.isEmpty()) {
             //未授予的权限为空，表示都授予了
             Toast.makeText(MainActivity.this, "已经授权", Toast.LENGTH_LONG).show();
-            //展示对话框
-            showDownloadDialog();
         } else {
             //请求权限方法
             String[] permissions = mPermissionList.toArray(new String[mPermissionList.size()]);
@@ -133,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "权限未申请", Toast.LENGTH_SHORT).show();
                     }
                 }else {  //点击允许
-                    //展示对话框
-                    showDownloadDialog();
+
                 }
             }
         }

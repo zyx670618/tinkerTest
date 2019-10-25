@@ -149,13 +149,13 @@ ext {
     // 是否使用Tinker(当你的项目处于开发调试阶段时，可以改为false)
     tinkerEnabled = true
     // 基础包文件路径（名字这里写死为old-app.apk。用于比较新旧app以生成补丁包，不管是debug还是release编译）
-    tinkerOldApkPath = "${bakPath}/app-release-1024-11-28-51.apk"
+    tinkerOldApkPath = "${bakPath}/app-release-1025-15-47-09.apk"
     // 基础包的mapping.txt文件路径（用于辅助混淆补丁包的生成，一般在生成release版app时会使用到混淆，所以这个mapping.txt文件一般只是用于release安装包补丁的生成）
-    tinkerApplyMappingPath = "${bakPath}/app-release-1024-11-28-51-mapping.txt"
+    tinkerApplyMappingPath = "${bakPath}/app-release-1025-15-47-09-mapping.txt"
     // 基础包的R.txt文件路径（如果你的安装包中资源文件有改动，则需要使用该R.txt文件来辅助生成补丁包）
-    tinkerApplyResourcePath = "${bakPath}/app-release-1024-11-28-51-R.txt"
+    tinkerApplyResourcePath = "${bakPath}/app-release-1025-15-47-09-R.txt"
     //多渠道打包相关
-    tinkerBuildFlavorDirectory = "${bakPath}/app-release-1024-11-28-51"
+    tinkerBuildFlavorDirectory = "${bakPath}/app-release-1025-15-47-09"
 }
 
 def getOldApkPath() {

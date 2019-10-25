@@ -33,7 +33,6 @@ import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 /**
  * optional, use dynamic configuration is better way
  * for native crash,
- * <p/>
  * tinker's crash is caught by {@code LoadReporter.onLoadException}
  * use {@code TinkerApplicationHelper} api, no need to install tinker!
  * SampleUncaughtExceptionHandler：Tinker的全局异常捕获器。
